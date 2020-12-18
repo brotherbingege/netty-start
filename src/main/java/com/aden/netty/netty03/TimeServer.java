@@ -52,7 +52,9 @@ class ChildChannelHandler extends ChannelInitializer<SocketChannel> {
     @Override
     protected void initChannel(SocketChannel socketChannel) throws Exception {
         //解决粘包拆包的解码器 begin
+        //LineBasedFrameDecoder 循环换行符  \n 或者 \r\n ，遇到前面的换行符，则自动转换成一个包，如果超过可读的最大长度还没有换行符则报错
         socketChannel.pipeline().addLast(new LineBasedFrameDecoder(1024));
+        // 将上面读到的数据转换成字符串
         socketChannel.pipeline().addLast(new StringDecoder());
         //解决粘包拆包的解码器 end
         socketChannel.pipeline().addLast(new TimeServerHandler());
