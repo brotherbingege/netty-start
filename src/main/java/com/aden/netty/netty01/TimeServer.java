@@ -2,18 +2,25 @@ package com.aden.netty.netty01;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-
-import java.io.IOException;
+import java.util.Date;
 
 /**
  * @author yb
  * @date 2020/12/17 15:37
  */
 public class TimeServer {
+
+    public static void main(String[] args) throws Exception{
+        int port = 8081;
+        TimeServer timeServer = new TimeServer();
+        timeServer.bind(port);
+    }
+
     public void bind(Integer port)throws Exception{
         //配置服务端的NIO线程组
         EventLoopGroup bossGroup = new NioEventLoopGroup();
@@ -46,19 +53,22 @@ class ChildChannelHandler extends ChannelInitializer<SocketChannel> {
 }
 
 class TimeServerHandler extends ChannelInboundHandlerAdapter{
-    @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        final ByteBuf time  = ctx.alloc().buffer(4);
-        time.writeInt((int)(System.currentTimeMillis()/ 1000L + 2208988800L));
-        final ChannelFuture f = ctx.writeAndFlush(time);
 
-        f.addListener(new ChannelFutureListener() {
-            @Override
-            public void operationComplete(ChannelFuture channelFuture) throws Exception {
-                assert f == channelFuture;
-                ctx.close();
-            }
-        });
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        ByteBuf byteBuf = (ByteBuf)msg;
+        byte[] bytes = new byte[byteBuf.readableBytes()];
+        byteBuf.readBytes(bytes);
+        String req = new String(bytes,"UTF-8");
+        System.out.println("req-data-is:"+req);
+        String res = "now is :"+new Date();
+        ByteBuf resp = Unpooled.copiedBuffer(res.getBytes());
+        ctx.write(resp);
+    }
+
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+        ctx.flush();
     }
 
     @Override
