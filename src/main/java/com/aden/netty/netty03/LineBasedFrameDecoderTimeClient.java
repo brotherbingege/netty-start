@@ -15,10 +15,10 @@ import io.netty.handler.codec.string.StringDecoder;
  * @author yb
  * @date 2020/12/18 14:27
  */
-public class TimeClient {
+public class LineBasedFrameDecoderTimeClient {
 
     public static void main(String[] args) throws Exception{
-        new TimeClient().bind("127.0.0.1",8081);
+        new LineBasedFrameDecoderTimeClient().bind("127.0.0.1",8081);
     }
 
     public void bind(String host,Integer port)throws Exception {

@@ -16,11 +16,11 @@ import java.util.Date;
  * @author yb
  * @date 2020/12/17 15:37
  */
-public class TimeServer {
+public class LineBasedFrameDecoderTimeServer {
 
     public static void main(String[] args) throws Exception{
         int port = 8081;
-        TimeServer timeServer = new TimeServer();
+        LineBasedFrameDecoderTimeServer timeServer = new LineBasedFrameDecoderTimeServer();
         timeServer.bind(port);
     }
 
