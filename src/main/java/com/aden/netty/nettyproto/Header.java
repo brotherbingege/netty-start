@@ -50,8 +50,10 @@ public final class Header {
 
 
     static class MessageType{
-        public static final int LOGIN_REQ = 3;
-        public static final int LOGIN_RESP = 4;
+        public static final byte LOGIN_REQ = 3;
+        public static final byte LOGIN_RESP = 4;
+        public static final byte HEARTBEAT_REQ = 5;
+        public static final byte HEARTBEAT_RESP = 6;
 //         * 消息类型
 //     * 0：业务请求消息
 //     * 1：业务响应消息
