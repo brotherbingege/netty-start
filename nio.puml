@@ -39,6 +39,8 @@ class WindowsSelectorProvider extends SelectorProviderImpl {
 
     public AbstractSelector openSelector() throws IOException {return new WindowsSelectorImpl(this);}
 }
+
+WindowsSelectorProvider --> AbstractSelector
 abstract class SelectorImpl extends AbstractSelector{
     public int select(long var1) throws IOException{doSelect(var1);}
     protected abstract int doSelect(long var1) throws IOException;
@@ -70,4 +72,6 @@ interface InterruptibleChannel extends Channel{
     public void close() throws IOException;
 }
 
+
+ AbstractSelectableChannel --> Selector
 @enduml
