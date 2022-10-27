@@ -1,0 +1,73 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+abstract class Selector implements Closeable{
+    public static Selector open() throws IOException {return SelectorProvider.provider().openSelector();}
+    public abstract Set<SelectionKey> selectedKeys();
+    public abstract int selectNow() throws IOException;
+    public abstract int select(long timeout) throws IOException;
+    public abstract int select() throws IOException;
+    public abstract void close() throws IOException;
+}
+abstract class SelectionKey{
+    public abstract SelectableChannel channel();
+    public abstract boolean isValid();
+    public final boolean isReadable() {return (readyOps() & OP_READ) != 0;}
+    public final boolean isAcceptable() {return (readyOps() & OP_ACCEPT) != 0;}
+}
+abstract class AbstractSelectionKey extends SelectionKey{
+    public final boolean isValid() {return valid;}
+}
+class SelectionKeyImpl extends AbstractSelectionKey {
+    public SelectableChannel channel() {return (SelectableChannel)this.channel;}
+}
+Selector --> SelectionKey
+Selector --> SelectorProvider
+
+abstract class SelectorProvider {
+
+    public static SelectorProvider provider() {//loadSelectorProvider}
+
+    public abstract AbstractSelector openSelector() throws IOException;
+}
+
+abstract class SelectorProviderImpl extends SelectorProvider {
+    public abstract AbstractSelector openSelector() throws IOException;
+}
+
+class WindowsSelectorProvider extends SelectorProviderImpl {
+
+    public AbstractSelector openSelector() throws IOException {return new WindowsSelectorImpl(this);}
+}
+abstract class SelectorImpl extends AbstractSelector{
+    public int select(long var1) throws IOException{doSelect(var1);}
+    protected abstract int doSelect(long var1) throws IOException;
+    public Set<SelectionKey> selectedKeys() {//实现}
+}
+abstract class AbstractSelector extends Selector{
+
+}
+class WindowsSelectorImpl extends SelectorImpl{
+    protected int doSelect(long var1) throws IOException{//实现}
+}
+
+interface Channel extends Closeable {
+    public boolean isOpen();
+    public void close() throws IOException;
+}
+interface NetworkChannel extends Channel{
+        NetworkChannel bind(SocketAddress local) throws IOException;
+        SocketAddress getLocalAddress() throws IOException;
+        <T> NetworkChannel setOption(SocketOption<T> name, T value) throws IOException;
+        <T> T getOption(SocketOption<T> name) throws IOException;
+        Set<SocketOption<?>> supportedOptions();
+}
+abstract class ServerSocketChannel extends AbstractSelectableChannel implements NetworkChannel{}
+abstract class AbstractSelectableChannel extends SelectableChannel{}
+abstract class SelectableChannel extends AbstractInterruptibleChannel implements Channel{}
+abstract class AbstractInterruptibleChannel implements Channel, InterruptibleChannel{}
+interface InterruptibleChannel extends Channel{
+    public void close() throws IOException;
+}
+
+@enduml
